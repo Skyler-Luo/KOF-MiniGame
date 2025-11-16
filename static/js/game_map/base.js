@@ -1,5 +1,5 @@
-import { AcGameObject } from '/static/js/ac_game_object/base.js';
-import { Controller } from '/static/js/controller/base.js';
+import { AcGameObject } from '/KOF-MiniGame/static/js/ac_game_object/base.js';
+import { Controller } from '/KOF-MiniGame/static/js/controller/base.js';
 
 // 地图  继承AcGameObject
 class GameMap extends AcGameObject {
@@ -56,4 +56,4 @@ class GameMap extends AcGameObject {
 
 export{
     GameMap
-}
+};
