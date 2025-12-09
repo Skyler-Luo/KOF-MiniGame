@@ -1,23 +1,29 @@
-//该文件用来控制输入，键盘输入
-export class Controller{
-    constructor($canvas){
+/**
+ * 键盘控制器类
+ * 用于监听和管理键盘输入事件
+ */
+export class Controller {
+    constructor($canvas) {
         this.$canvas = $canvas;
-        //存储当时在键盘上按下的键。然后set可以进行去重
+        // 使用 Set 存储当前按下的按键，自动去重
         this.pressed_keys = new Set();
-        this.start();
+        this.bindEvents();
     }
 
-
-    start() {
-        //保留了外部的this引用
+    /**
+     * 绑定键盘事件
+     */
+    bindEvents() {
         let outer = this;
-        //按键按下。当按键按下时，将按键名添加到pressed_keys集合中
+
+        // 按键按下事件：将按键名添加到 pressed_keys 集合中
         this.$canvas.keydown(function (e) {
             outer.pressed_keys.add(e.key);
         });
-        //按键释放。当按键释放时，从pressed_keys集合中移除对应的键
+
+        // 按键释放事件：从 pressed_keys 集合中移除对应的键
         this.$canvas.keyup(function (e) {
             outer.pressed_keys.delete(e.key);
         });
     }
-};
+}

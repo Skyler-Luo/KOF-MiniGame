@@ -1,63 +1,77 @@
-import { AcGameObject } from '/KOF-MiniGame/static/js/ac_game_object/base.js';
-//实现玩家
-export class Player extends AcGameObject{
-    constructor(root,info){
-        super();
-//人物的基本属性
-        this.root = root; // 游戏根对象
-        this.id = info.id; // 玩家ID (0或1)
-        this.x = info.x; //x坐标
-        this.y = info.y; // y坐标
-        this.width = info.width;// 宽度
-        this.height = info.height; // 高度
-        this.color = info.color;// 颜色
-//人物的移动属性
-        this.direction = 1; // 朝向
+import { AcGameObject } from '../ac_game_object/base.js';
 
-        this.vx = 0;// x轴速度
-        this.vy = 0; // y轴速度
+/**
+ * 玩家基类
+ * 定义玩家的基本属性、移动、攻击和渲染逻辑
+ */
+export class Player extends AcGameObject {
+    constructor(root, info) {
+        super();
+
+        // 基本属性
+        this.root = root;           // 游戏根对象
+        this.id = info.id;          // 玩家 ID（0 或 1）
+        this.x = info.x;            // X 坐标
+        this.y = info.y;            // Y 坐标
+        this.width = info.width;    // 宽度
+        this.height = info.height;  // 高度
+        this.color = info.color;    // 颜色
+
+        // 移动属性
+        this.direction = 1;         // 朝向（1: 右, -1: 左）
+        this.vx = 0;                // X 轴速度
+        this.vy = 0;                // Y 轴速度
+        this.speedx = 400;          // 水平移动速度
+        this.speedy = -1000;        // 跳跃初始速度
+        this.gravity = 50;          // 重力加速度
+
+        // 引用
         this.ctx = this.root.game_map.ctx;
-        this.speedx =400; //水平速度
-        this.speedy = -1000; // 跳起的初始速度
-        this.gravity = 50; // 重力加速度
         this.pressed_keys = this.root.game_map.controller.pressed_keys;
-        this.status = 3 ; // 0:idle , 1:x向前 2. 向后 3. 跳跃 4. 攻击 5.被打 6.死亡
-        this.animations = new Map();//将状态的动作存到数组里面
-        this.frame_current_cnt = 0;//当前记录多少帧
-//人物的生命值设定
-        this.hp = 100; //社为100生命值
+
+        // 状态：0-待机, 1-前进, 2-后退, 3-跳跃, 4-攻击, 5-受击, 6-死亡
+        this.status = 3;
+        this.animations = new Map();    // 存储各状态的动画
+        this.frame_current_cnt = 0;     // 当前帧计数
+
+        // 生命值
+        this.hp = 100;
         this.$hp = this.root.$kof.find(`.kof-head-hp-${this.id}>div`);
         this.$hp_div = this.$hp.find('div');
+    }
 
-       }
-
-    start(){
-
+    start() {
 
     }
 
-    update_control(){
-        // 根据玩家ID分配不同的按键
-        let w ,a ,d,space;
-        if(this.id === 0){
+    /**
+     * 处理玩家控制输入
+     */
+    update_control() {
+        let w, a, d, space;
+
+        // 根据玩家 ID 分配不同的按键
+        if (this.id === 0) {
             w = this.pressed_keys.has('w');
             a = this.pressed_keys.has('a');
             d = this.pressed_keys.has('d');
             space = this.pressed_keys.has(' ');
-        }else{
+        } else {
             w = this.pressed_keys.has('ArrowUp');
             a = this.pressed_keys.has('ArrowLeft');
-            d = this.pressed_keys.has('ArrowrRight');
+            d = this.pressed_keys.has('ArrowRight');
             space = this.pressed_keys.has('Enter');
         }
-        //将人物的状态进行转变
+
+        // 状态转换逻辑
         if (this.status === 0 || this.status === 1) {
             if (space) {
-                this.status = 4; // 攻击
+                // 攻击
+                this.status = 4;
                 this.vx = 0;
                 this.frame_current_cnt = 0;
             } else if (w) {
-                // 实现跳跃
+                // 跳跃（可同时左右移动）
                 if (d) {
                     this.vx = this.speedx;
                 } else if (a) {
@@ -69,59 +83,73 @@ export class Player extends AcGameObject{
                 this.status = 3;
                 this.frame_current_cnt = 0;
             } else if (d) {
-                //实现右移
+                // 右移
                 this.vx = this.speedx;
                 this.status = 1;
             } else if (a) {
-                //实现左移
+                // 左移
                 this.vx = -this.speedx;
                 this.status = 1;
             } else {
+                // 待机
                 this.status = 0;
                 this.vx = 0;
             }
         }
     }
-    update_move(){
-        this.vy += this.gravity;// 重力加速
-        this.x += this.vx * this.timedelta / 1000;// x轴移动
-        this.y += this.vy * this.timedelta / 1000;// y轴移动
-//往下掉的时候不能持续向下，需定义一个指标
-        if(this.y > 450){
+
+    /**
+     * 更新玩家位置
+     */
+    update_move() {
+        // 应用重力
+        this.vy += this.gravity;
+        this.x += this.vx * this.timedelta / 1000;
+        this.y += this.vy * this.timedelta / 1000;
+
+        // 地面碰撞检测
+        if (this.y > 450) {
             this.y = 450;
             this.vy = 0;
-            this.status = 0;
-
-            if (this.status === 3) this.status = 0;
+            if (this.status === 3) {
+                this.status = 0;
+            }
         }
-// 定义边界
-        if(this.x< 0){
+
+        // 边界检测
+        if (this.x < 0) {
             this.x = 0;
-        }else if (this.x + this.width > this.root.game_map.$canvas.width()){
+        } else if (this.x + this.width > this.root.game_map.$canvas.width()) {
             this.x = this.root.game_map.$canvas.width() - this.width;
         }
     }
-//更新方向
-    update_direction() {
 
+    /**
+     * 更新玩家朝向
+     */
+    update_direction() {
         if (this.status === 6) return;
 
         let players = this.root.players;
-
         if (players[0] && players[1]) {
-            let me = this, you = players[1 - this.id];
-            if (me.x < you.x) me.direction = 1;// 对手在右边，朝右
-            else me.direction = -1;
+            let me = this;
+            let you = players[1 - this.id];
+            // 根据对手位置调整朝向
+            me.direction = (me.x < you.x) ? 1 : -1;
         }
     }
-//被攻击后受伤跟生命值减少
+
+    /**
+     * 处理被攻击
+     */
     is_attack() {
         if (this.status === 6) return;
 
         this.status = 5;
         this.frame_current_cnt = 0;
-        this.hp = Math.max(this.hp - 20, 0); // 实现扣血
-// 改变血条动画
+        this.hp = Math.max(this.hp - 20, 0);
+
+        // 血条动画
         this.$hp_div.animate({
             width: this.$hp.parent().width() * this.hp / 100,
         }, 300);
@@ -130,54 +158,63 @@ export class Player extends AcGameObject{
             width: this.$hp.parent().width() * this.hp / 100,
         }, 600);
 
-        //this.$hp.width(this.$hp.parent().width() * this.hp / 100);
-// 死亡判断
+        // 死亡判断
         if (this.hp === 0) {
-            this.status = 6;// 死亡状态
+            this.status = 6;
             this.frame_current_cnt = 0;
             this.vx = 0;
         }
     }
-//检测是否被碰撞
-    is_collition(r1, r2) {
-        if (Math.max(r1.x1, r2.x1) > Math.min(r1.x2, r2.x2))
-            return false;
-        if (Math.max(r1.y1, r2.y1) > Math.min(r1.y2, r2.y2))
-            return false;
 
+    /**
+     * 检测两个矩形是否碰撞
+     * @param {Object} r1 - 矩形1 {x1, y1, x2, y2}
+     * @param {Object} r2 - 矩形2 {x1, y1, x2, y2}
+     * @returns {boolean} 是否碰撞
+     */
+    is_collision(r1, r2) {
+        if (Math.max(r1.x1, r2.x1) > Math.min(r1.x2, r2.x2)) return false;
+        if (Math.max(r1.y1, r2.y1) > Math.min(r1.y2, r2.y2)) return false;
         return true;
     }
-//攻击
+
+    /**
+     * 更新攻击检测
+     */
     update_attack() {
         // 在攻击动画的特定帧检测碰撞
         if (this.status === 4 && this.frame_current_cnt === 18) {
-            let me = this, you = this.root.players[1 - this.id];
-             // 创建攻击区域矩形
+            let me = this;
+            let you = this.root.players[1 - this.id];
+
+            // 创建攻击区域矩形
             let r1;
             if (this.direction > 0) {
                 r1 = {
                     x1: me.x + 120,
                     y1: me.y + 43,
                     x2: me.x + 120 + 100,
-                    y2: this.y + 43 + 20,
-                }
+                    y2: me.y + 43 + 20,
+                };
             } else {
                 r1 = {
                     x1: me.x - 100,
-                    y1: this.y + 43,
-                    x2: me.x - 100 + 100,
+                    y1: me.y + 43,
+                    x2: me.x,
                     y2: me.y + 43 + 20,
-                }
+                };
             }
 
+            // 对手碰撞区域
             let r2 = {
                 x1: you.x,
                 y1: you.y,
                 x2: you.x + you.width,
                 y2: you.y + you.height,
             };
-// 检测是否受到碰撞
-            if (this.is_collition(r1, r2)) {// 对手受到攻击
+
+            // 检测碰撞
+            if (this.is_collision(r1, r2)) {
                 you.is_attack();
             }
         }
@@ -188,50 +225,65 @@ export class Player extends AcGameObject{
         this.update_move();
         this.update_direction();
         this.update_attack();
-
         this.render();
     }
 
-    render(){
-        // this.ctx.fillStyle = this.color;
-        // this.ctx.fillRect(this.x, this.y, this.width, this.height);
-
+    /**
+     * 渲染玩家
+     */
+    render() {
         let status = this.status;
 
+        // 后退状态判断
         if (status === 1 && this.direction * this.vx < 0) {
             status = 2;
         }
 
         let obj = this.animations.get(status);
         if (obj && obj.loaded) {
+            let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
+            let image = obj.gif.frames[k].image;
+
             if (this.direction > 0) {
-                 // 朝右渲染
-                let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
-                let image = obj.gif.frames[k].image;
-                this.ctx.drawImage(image, this.x, this.y + obj.offset_y, image.width * obj.scale, image.height * obj.scale);
+                // 朝右渲染
+                this.ctx.drawImage(
+                    image,
+                    this.x,
+                    this.y + obj.offset_y,
+                    image.width * obj.scale,
+                    image.height * obj.scale
+                );
             } else {
+                // 朝左渲染（水平翻转）
                 this.ctx.save();
                 this.ctx.scale(-1, 1);
                 this.ctx.translate(-this.root.game_map.$canvas.width(), 0);
 
-                let k = parseInt(this.frame_current_cnt / obj.frame_rate) % obj.frame_cnt;
-                let image = obj.gif.frames[k].image;
-                this.ctx.drawImage(image, this.root.game_map.$canvas.width() - this.x - this.width, this.y + obj.offset_y, image.width * obj.scale, image.height * obj.scale);
+                this.ctx.drawImage(
+                    image,
+                    this.root.game_map.$canvas.width() - this.x - this.width,
+                    this.y + obj.offset_y,
+                    image.width * obj.scale,
+                    image.height * obj.scale
+                );
 
                 this.ctx.restore();
             }
         }
-   // 特殊状态动画结束处理
+
+        // 特殊状态动画结束处理
         if (status === 4 || status === 5 || status === 6) {
-            if (this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {
+            if (obj && this.frame_current_cnt === obj.frame_rate * (obj.frame_cnt - 1)) {
                 if (status === 6) {
-                    this.frame_current_cnt--;// 死亡状态保持最后一帧
+                    // 死亡状态保持最后一帧
+                    this.frame_current_cnt--;
                 } else {
-                    this.status = 0;// 回到待机状态
+                    // 回到待机状态
+                    this.status = 0;
                 }
             }
         }
 
         this.frame_current_cnt++;
     }
-};
+}

@@ -1,54 +1,74 @@
-//为了将每个对象元素刷新一遍，则建一个数组，设置全局数组，可以
-let AC_GAME_OBJECTS = [] ;
+/**
+ * 游戏对象基类
+ * 用于管理所有游戏对象的生命周期和帧更新
+ */
 
-class AcGameObject{
-    constructor(){
-        AC_GAME_OBJECTS.push(this);//这个可以实现每个新建的对象自动加入开始定义的全局数组中
+// 全局游戏对象数组，存储所有需要更新的游戏对象
+let AC_GAME_OBJECTS = [];
 
-        this.timedalta = 0 ;//这一帧与上一帧的时间间隔
-        this.has_call_start = false;//这个start有没有被调用
+class AcGameObject {
+    constructor() {
+        // 将新创建的对象自动加入全局数组
+        AC_GAME_OBJECTS.push(this);
+
+        this.timedelta = 0; // 当前帧与上一帧的时间间隔（毫秒）
+        this.has_call_start = false; // 标记 start 方法是否已被调用
     }
 
-    start(){ //初始执行一次
+    /**
+     * 初始化方法，仅在第一帧执行一次
+     */
+    start() {
 
     }
 
-    update(){ //每一帧执行一次（除了第一帧以外）
+    /**
+     * 更新方法，每一帧执行一次（第一帧除外）
+     */
+    update() {
 
     }
 
-    destory(){ //删除当前对象
-        for(let i in AC_GAME_OBJECTS){
-            if(AC_GAME_OBJECTS[i] === this){
-                AC_GAME_OBJECTS.splice(i,1);//删除元素
+    /**
+     * 销毁当前对象，从全局数组中移除
+     */
+    destroy() {
+        for (let i in AC_GAME_OBJECTS) {
+            if (AC_GAME_OBJECTS[i] === this) {
+                AC_GAME_OBJECTS.splice(i, 1);
                 break;
             }
         }
-
     }
 }
 
-let last_timestap;
-//实现一个动画循环
-let AC_GAME_OBJECTS_FRAME = (timestap) => {
-    for(let obj of AC_GAME_OBJECTS){
-        //判断有没有执行过
-        if(!obj.has_call_start){
-            obj.start();//如果没有的话首次执行初始化
+// 记录上一帧的时间戳
+let last_timestamp;
+
+/**
+ * 游戏主循环，使用 requestAnimationFrame 实现动画
+ * @param {number} timestamp - 当前帧的时间戳
+ */
+let AC_GAME_OBJECTS_FRAME = (timestamp) => {
+    for (let obj of AC_GAME_OBJECTS) {
+        if (!obj.has_call_start) {
+            // 首次执行初始化
+            obj.start();
             obj.has_call_start = true;
         } else {
-            obj.timedalta = timestap - last_timestap;//来计算时间差
+            // 计算帧间隔时间并更新
+            obj.timedelta = timestamp - last_timestamp;
             obj.update();
         }
     }
 
-    last_timestap = timestap;
-    requestAnimationFrame(AC_GAME_OBJECTS_FRAME);//递归
+    last_timestamp = timestamp;
+    requestAnimationFrame(AC_GAME_OBJECTS_FRAME);
+};
 
-}
-
+// 启动游戏主循环
 requestAnimationFrame(AC_GAME_OBJECTS_FRAME);
-//将其抛出
-export{
+
+export {
     AcGameObject
 }

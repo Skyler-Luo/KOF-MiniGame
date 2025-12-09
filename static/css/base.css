@@ -1,13 +1,35 @@
-#kof{
-    width: 1280px;
-    height: 720px;
-    background-image: url('http://127.0.0.1:5500/KOF-MiniGame/static/images/background/0.gif');
-    background-size:200%  100%;
-    background-position:top;
-    position: absolute;
+/**
+ * KOF 游戏样式表
+ */
+
+/* 重置默认样式 */
+* {
+    margin: 0;
+    padding: 0;
 }
 
-#kof>.kof-head {
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* 游戏主容器 */
+#kof {
+    width: 1280px;
+    height: 720px;
+    background-image: url('../images/background/0.gif');
+    background-size: 200% 100%;
+    background-position: top;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center center;
+}
+
+/* 头部区域：血条和计时器容器 */
+#kof > .kof-head {
     width: 100%;
     height: 80px;
     position: absolute;
@@ -16,7 +38,8 @@
     align-items: center;
 }
 
-#kof>.kof-head>.kof-head-hp-0 {
+/* 玩家0血条容器（左侧） */
+#kof > .kof-head > .kof-head-hp-0 {
     width: calc(50% - 80px);
     height: 40px;
     margin-left: 40px;
@@ -25,7 +48,8 @@
     box-sizing: border-box;
 }
 
-#kof>.kof-head>.kof-head-timer {
+/* 中间计时器 */
+#kof > .kof-head > .kof-head-timer {
     width: 80px;
     height: 60px;
     background-color: orange;
@@ -39,7 +63,8 @@
     user-select: none;
 }
 
-#kof>.kof-head>.kof-head-hp-1 {
+/* 玩家1血条容器（右侧） */
+#kof > .kof-head > .kof-head-hp-1 {
     width: calc(50% - 80px);
     height: 40px;
     border: white 5px solid;
@@ -47,27 +72,31 @@
     box-sizing: border-box;
 }
 
-#kof>.kof-head>.kof-head-hp-0>div {
+/* 玩家0血条背景（红色，表示已损失的血量） */
+#kof > .kof-head > .kof-head-hp-0 > div {
     width: 100%;
     height: 100%;
     background-color: red;
     float: right;
 }
 
-#kof>.kof-head>.kof-head-hp-1>div {
+/* 玩家1血条背景（红色，表示已损失的血量） */
+#kof > .kof-head > .kof-head-hp-1 > div {
     width: 100%;
     height: 100%;
     background-color: red;
 }
 
-#kof>.kof-head>.kof-head-hp-0>div>div {
+/* 玩家0当前血量（绿色） */
+#kof > .kof-head > .kof-head-hp-0 > div > div {
     width: 100%;
     height: 100%;
     background-color: lightgreen;
     float: right;
 }
 
-#kof>.kof-head>.kof-head-hp-1>div>div {
+/* 玩家1当前血量（绿色） */
+#kof > .kof-head > .kof-head-hp-1 > div > div {
     width: 100%;
     height: 100%;
     background-color: lightgreen;
