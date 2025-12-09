@@ -66,7 +66,43 @@ class GameMap extends AcGameObject {
 
     }
 
+    /**
+     * 检查游戏是否结束并判定胜负
+     */
+    checkGameEnd() {
+        if (this.root.gameEnded) return;
+
+        const [a, b] = this.root.players;
+
+        // 检查是否有玩家死亡
+        if (a.hp <= 0 || b.hp <= 0) {
+            if (a.hp <= 0 && b.hp <= 0) {
+                // 双方同时死亡，比较血量（此时都是0，平局）
+                this.root.showEndModal('draw');
+            } else if (a.hp <= 0) {
+                this.root.showEndModal('player1');
+            } else {
+                this.root.showEndModal('player0');
+            }
+            return;
+        }
+
+        // 时间结束
+        if (this.time_left <= 0) {
+            if (a.hp > b.hp) {
+                this.root.showEndModal('player0');
+            } else if (b.hp > a.hp) {
+                this.root.showEndModal('player1');
+            } else {
+                this.root.showEndModal('draw');
+            }
+        }
+    }
+
     update() {
+        // 如果游戏已结束，不再更新
+        if (this.root.gameEnded) return;
+
         // 更新剩余时间
         this.time_left -= this.timedelta;
 
@@ -84,6 +120,9 @@ class GameMap extends AcGameObject {
 
         // 更新计时器显示
         this.$timer.text(parseInt(this.time_left / 1000));
+
+        // 检查游戏结束
+        this.checkGameEnd();
 
         this.render();
     }
