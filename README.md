@@ -1,14 +1,13 @@
 # 🎮 KOF-MiniGame
 
-<div align="center">
-
 **一个拳皇风格的双人对战小游戏** 👊
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![HTML5](https://img.shields.io/badge/HTML5-Canvas-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg)](https://www.ecma-international.org/ecma-262/6.0/)
+## 🛠️ 技术栈
 
-</div>
+[![HTML5](https://img.shields.io/badge/HTML5-Canvas-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
+[![CSS3](https://img.shields.io/badge/CSS3-Styling-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg)](https://www.ecma-international.org/ecma-262/6.0/)
+[![jQuery](https://img.shields.io/badge/jQuery-3.x-blue.svg)](https://jquery.com/)
 
 ## 📸 游戏截图
 
@@ -24,11 +23,8 @@
 | 🎨 | GIF 动画角色渲染，流畅的战斗动作 |
 | ⏱️ | 60秒倒计时，紧张刺激 |
 | ❤️ | 血条系统，实时显示战斗状态 |
-| 📱 | 全屏自适应，任意屏幕畅玩 |
 
 ## 🎯 操作说明
-
-<div align="center">
 
 | 操作 | 🎮 玩家1 | 🎮 玩家2 |
 |:----:|:-------:|:-------:|
@@ -36,8 +32,6 @@
 | ⬅️ 左移 | `A` | `←` |
 | ➡️ 右移 | `D` | `→` |
 | 👊 攻击 | `空格` | `Enter` |
-
-</div>
 
 ## 🚀 快速开始
 
@@ -68,17 +62,6 @@ KOF-MiniGame/
 ├── 📂 templates/            # HTML 模板
 └── 📄 README.md
 ```
-
-## 🛠️ 技术栈
-
-<div align="center">
-
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![jQuery](https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white)
-
-</div>
 
 ## 📝 License
 
