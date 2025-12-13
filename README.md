@@ -73,6 +73,6 @@ KOF-MiniGame/
 
 ⭐ **如果觉得不错，欢迎 Star！** ⭐
 
-Made with ❤️ by [宇翊](https://github.com/Skyler-Luo) & [0033](https://github.com/zhangyw24)
+🌸 Created by [宇翊](https://github.com/Skyler-Luo) & [0033](https://github.com/zhangyw24) 🌸
 
 </div>
