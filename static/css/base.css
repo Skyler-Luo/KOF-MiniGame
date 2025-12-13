@@ -129,57 +129,60 @@ html, body {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border: 3px solid #e94560;
     border-radius: 15px;
-    padding: 40px;
+    padding: 25px 30px;
     text-align: center;
     box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
     min-width: 400px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
 }
 
 /* 弹窗标题 */
 .kof-modal-title {
     color: #e94560;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: bold;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* 弹窗副标题 */
 .kof-modal-subtitle {
     color: #fff;
-    font-size: 18px;
-    margin-bottom: 20px;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 /* 选择区域 */
 .kof-select-area {
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 .kof-select-label {
     color: #0f3460;
     background-color: #e94560;
-    padding: 5px 15px;
+    padding: 4px 12px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     display: inline-block;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 /* 地图选择网格 */
 .kof-map-grid {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
 .kof-map-item {
-    width: 120px;
-    height: 70px;
-    border: 3px solid #444;
-    border-radius: 8px;
+    width: 100px;
+    height: 55px;
+    border: 2px solid #444;
+    border-radius: 6px;
     cursor: pointer;
     background-size: 200% 100%;
     background-position: top;
@@ -196,17 +199,93 @@ html, body {
     box-shadow: 0 0 15px rgba(233, 69, 96, 0.8);
 }
 
-/* 角色选择区域（预留） */
-.kof-character-area {
-    margin: 20px 0;
-    padding: 20px;
-    border: 2px dashed #444;
-    border-radius: 10px;
+/* 角色选择区域 */
+.kof-character-select {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
-.kof-character-placeholder {
-    color: #666;
+.kof-player-select {
+    flex: 1;
+    max-width: 300px;
+}
+
+.kof-player-label {
     font-size: 14px;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.kof-player-label.player0 {
+    background-color: #4dabf7;
+    color: #1a1a2e;
+}
+
+.kof-player-label.player1 {
+    background-color: #fff;
+    color: #1a1a2e;
+}
+
+.kof-vs-divider {
+    color: #e94560;
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.kof-character-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.kof-character-item {
+    width: 60px;
+    padding: 5px;
+    border: 2px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.kof-character-item:hover {
+    border-color: #e94560;
+    transform: scale(1.05);
+}
+
+.kof-character-item.selected {
+    border-color: #e94560;
+    box-shadow: 0 0 15px rgba(233, 69, 96, 0.8);
+    background-color: rgba(233, 69, 96, 0.2);
+}
+
+.kof-character-avatar {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}
+
+/* 玩家2角色头像水平翻转 */
+#player1-chars .kof-character-avatar {
+    transform: scaleX(-1);
+}
+
+.kof-character-name {
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 3px;
+    text-align: center;
 }
 
 /* 按钮样式 */
@@ -214,12 +293,12 @@ html, body {
     background: linear-gradient(135deg, #e94560 0%, #c23a51 100%);
     color: white;
     border: none;
-    padding: 15px 50px;
-    font-size: 20px;
+    padding: 12px 40px;
+    font-size: 16px;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 25px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 15px;
     transition: all 0.3s ease;
     text-transform: uppercase;
 }

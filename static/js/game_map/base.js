@@ -1,4 +1,4 @@
-import { AcGameObject } from '../ac_game_object/base.js';
+import { AcGameObject } from '../game_object/base.js';
 import { Controller } from '../controller/base.js';
 
 // 游戏设计分辨率

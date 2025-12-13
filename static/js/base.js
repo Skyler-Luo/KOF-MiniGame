@@ -1,5 +1,9 @@
 import { GameMap } from './game_map/base.js';
 import { Kyo } from './player/kyo.js';
+import { Goro } from './player/goro.js';
+import { Ryo } from './player/ryo.js';
+import { Iori } from './player/iori.js';
+import { Athena } from './player/athena.js';
 
 /**
  * KOF 游戏主类
@@ -9,12 +13,22 @@ import { Kyo } from './player/kyo.js';
 const DESIGN_WIDTH = 1280;
 const DESIGN_HEIGHT = 720;
 
+// 角色配置
+const CHARACTERS = [
+    { id: 'kyo', name: 'Kyo', class: Kyo },
+    { id: 'iori', name: 'Iori', class: Iori },
+    { id: 'athena', name: 'Athena', class: Athena },
+    { id: 'goro', name: 'Goro', class: Goro },
+    { id: 'ryo', name: 'Ryo', class: Ryo },
+];
+
 class KOF {
     constructor(id) {
         this.$kof = $('#' + id);
         this.game_map = null;
         this.players = [];
         this.selectedMap = 0;
+        this.selectedCharacters = [0, 1]; // 玩家1和玩家2选择的角色索引
         this.gameStarted = false;
         this.gameEnded = false;
 
@@ -56,6 +70,19 @@ class KOF {
             `;
         }
 
+        // 生成角色选择项
+        let characterItems = '';
+        CHARACTERS.forEach((char, index) => {
+            characterItems += `
+                <div class="kof-character-item" data-char="${index}">
+                    <div class="kof-character-avatar" 
+                         style="background-image: url('/static/images/player/${char.id}/0.gif')">
+                    </div>
+                    <div class="kof-character-name">${char.name}</div>
+                </div>
+            `;
+        });
+
         this.$kof.append(`
             <div class="kof-modal-overlay" id="start-modal">
                 <div class="kof-modal">
@@ -69,10 +96,19 @@ class KOF {
                     
                     <div class="kof-select-area">
                         <div class="kof-select-label">👤 选择角色</div>
-                        <div class="kof-character-area">
-                            <div class="kof-character-placeholder">
-                                角色选择功能开发中...<br>
-                                当前默认：玩家1 (Kyo) vs 玩家2 (Kyo)
+                        <div class="kof-character-select">
+                            <div class="kof-player-select">
+                                <div class="kof-player-label player0">玩家1 (WASD + 空格)</div>
+                                <div class="kof-character-grid" id="player0-chars">
+                                    ${characterItems}
+                                </div>
+                            </div>
+                            <div class="kof-vs-divider">VS</div>
+                            <div class="kof-player-select">
+                                <div class="kof-player-label player1">玩家2 (方向键 + Enter)</div>
+                                <div class="kof-character-grid" id="player1-chars">
+                                    ${characterItems}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -82,13 +118,30 @@ class KOF {
             </div>
         `);
 
-        // 地图选择事件 - 点击后实时预览背景
+        // 初始化角色选择状态
+        this.$kof.find('#player0-chars .kof-character-item').eq(this.selectedCharacters[0]).addClass('selected');
+        this.$kof.find('#player1-chars .kof-character-item').eq(this.selectedCharacters[1]).addClass('selected');
+
+        // 地图选择事件
         this.$kof.find('.kof-map-item').click((e) => {
             this.$kof.find('.kof-map-item').removeClass('selected');
             $(e.currentTarget).addClass('selected');
             this.selectedMap = $(e.currentTarget).data('map');
-            // 实时更新背景预览
             this.$kof.css('background-image', `url('/static/images/background/${this.selectedMap}.gif')`);
+        });
+
+        // 玩家1角色选择
+        this.$kof.find('#player0-chars .kof-character-item').click((e) => {
+            this.$kof.find('#player0-chars .kof-character-item').removeClass('selected');
+            $(e.currentTarget).addClass('selected');
+            this.selectedCharacters[0] = $(e.currentTarget).data('char');
+        });
+
+        // 玩家2角色选择
+        this.$kof.find('#player1-chars .kof-character-item').click((e) => {
+            this.$kof.find('#player1-chars .kof-character-item').removeClass('selected');
+            $(e.currentTarget).addClass('selected');
+            this.selectedCharacters[1] = $(e.currentTarget).data('char');
         });
 
         // 开始游戏按钮
@@ -110,9 +163,13 @@ class KOF {
         // 初始化游戏地图
         this.game_map = new GameMap(this);
 
+        // 获取选中的角色类
+        const Player0Class = CHARACTERS[this.selectedCharacters[0]].class;
+        const Player1Class = CHARACTERS[this.selectedCharacters[1]].class;
+
         // 初始化两个玩家
         this.players = [
-            new Kyo(this, {
+            new Player0Class(this, {
                 id: 0,
                 x: 200,
                 y: 0,
@@ -120,7 +177,7 @@ class KOF {
                 height: 200,
                 color: 'blue',
             }),
-            new Kyo(this, {
+            new Player1Class(this, {
                 id: 1,
                 x: 900,
                 y: 0,
@@ -136,7 +193,6 @@ class KOF {
 
     /**
      * 显示游戏结束弹窗
-     * @param {string} winner - 'player0', 'player1', 或 'draw'
      */
     showEndModal(winner) {
         if (this.gameEnded) return;
@@ -144,15 +200,17 @@ class KOF {
 
         let resultText, resultClass, detail;
         const [p0, p1] = this.players;
+        const char0Name = CHARACTERS[this.selectedCharacters[0]].name;
+        const char1Name = CHARACTERS[this.selectedCharacters[1]].name;
 
         if (winner === 'player0') {
-            resultText = '🏆 玩家1 获胜！';
+            resultText = `🏆 玩家1 (${char0Name}) 获胜！`;
             resultClass = 'player0';
-            detail = `玩家1 剩余血量: ${p0.hp} | 玩家2 剩余血量: ${p1.hp}`;
+            detail = `${char0Name} 剩余血量: ${p0.hp} | ${char1Name} 剩余血量: ${p1.hp}`;
         } else if (winner === 'player1') {
-            resultText = '🏆 玩家2 获胜！';
+            resultText = `🏆 玩家2 (${char1Name}) 获胜！`;
             resultClass = 'player1';
-            detail = `玩家1 剩余血量: ${p0.hp} | 玩家2 剩余血量: ${p1.hp}`;
+            detail = `${char0Name} 剩余血量: ${p0.hp} | ${char1Name} 剩余血量: ${p1.hp}`;
         } else {
             resultText = '🤝 平局！';
             resultClass = 'draw';
@@ -170,7 +228,6 @@ class KOF {
             </div>
         `);
 
-        // 再来一局按钮
         this.$kof.find('#btn-restart').click(() => {
             this.restartGame();
         });
@@ -180,11 +237,9 @@ class KOF {
      * 重新开始游戏
      */
     restartGame() {
-        // 清空游戏容器
         this.$kof.empty();
         this.$kof.css('background-image', '');
 
-        // 销毁现有对象
         if (this.game_map) {
             this.game_map.destroy();
         }
@@ -197,7 +252,6 @@ class KOF {
         this.gameStarted = false;
         this.gameEnded = false;
 
-        // 显示开始弹窗
         this.showStartModal();
     }
 }

@@ -1,4 +1,4 @@
-import { AcGameObject } from '../ac_game_object/base.js';
+import { AcGameObject } from '../game_object/base.js';
 
 /**
  * 玩家基类
@@ -141,13 +141,14 @@ export class Player extends AcGameObject {
 
     /**
      * 处理被攻击
+     * @param {number} damage - 伤害值，默认20
      */
-    is_attack() {
+    is_attack(damage = 20) {
         if (this.status === 6) return;
 
         this.status = 5;
         this.frame_current_cnt = 0;
-        this.hp = Math.max(this.hp - 20, 0);
+        this.hp = Math.max(this.hp - damage, 0);
 
         // 血条动画
         this.$hp_div.animate({
